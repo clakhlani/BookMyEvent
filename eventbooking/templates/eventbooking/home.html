@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>HOME PAGE</h1>
+<div>
+	{% for event in events %}
+		<div>
+			<h5><a href="/event/{{event.id}}"> {{event.id}} - {{event.name}}</a></h5>
+		</div>
+</div>
+{% endfor %}
+{% endblock %}
