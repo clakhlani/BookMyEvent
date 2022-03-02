@@ -4,10 +4,27 @@
 	<title>BookMyEvent</title>
 </head>
 <body>
-	<a href="/">
-		<h1>BookMyEvent</h1>
+	<a href="{% url 'home' %}">
+		<h3>BookMyEvent</h3>
+	</a>
+
+	{% if request.user.is_authenticated %}
+		<a href=""><h4>My Bookings</h4></a>
+		<a href="{% url 'logout' %}"><h4>Logout</h4></a>
+	{% else %}
+		<a href="{% url 'register' %}"><h4>Register</h4></a>
+		<a href="{% url 'login_page' %}"><h4>LogIn</h4></a>
+	{% endif %}
+	</a>
 	</a>
 	<hr>
+	{% if messages %}
+	{% for message in messages %}
+		<div class="alert alert-{{ message.tags }}" >
+			{{ message }}
+		</div>
+		{% endfor %}
+	{% endif %}
 	{% block content %}{% endblock %}
 </body>
 </html>
