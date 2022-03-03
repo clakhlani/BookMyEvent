@@ -22,6 +22,12 @@
 			<div>
 				<a href="{% url 'ticket_book' event.id %}"><button type="button">Book</button></a>
 			</div>
+			{% if request.user.is_superuser %}
+				<a href="#"><button type="button">Update</button></a>
+			{% endif %}
+			<div>
+				
+			</div>
 		</div>
 </div>
 {% endblock %}
