@@ -4,7 +4,7 @@ from django.db.models.deletion import CASCADE , SET_NULL
 
 # Create your models here.
 class Event(models.Model):
-	#id=models.AutoField(auto_created=True,primary_key=True)
+	
 	name= models.CharField(max_length=200)
 	summary=models.TextField(null=True,blank=True)
 	seats=models.IntegerField()

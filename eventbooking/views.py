@@ -1,8 +1,8 @@
 from django.shortcuts import render,redirect
 from .models import Event,Booking,Ticket
-from .forms import TicketBookingForm,PaymentForm
+from .forms import TicketBookingForm,PaymentForm,EventCreationForm
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 import datetime
 
 def home_page(request):
@@ -25,12 +25,23 @@ def ticket_booking(request,event_id):
 		form=TicketBookingForm(request.POST)
 		if form.is_valid():
 			no_of_person=form.cleaned_data["no_of_per"]
+			
+			if no_of_person == 0:
+				messages.error(request,'Please enter 1 or more Number Of Person')
+				return redirect('ticket_book',event_id=event_id)
+
 			if no_of_person > event.seats:
 				if event.seats == 0:
 					messages.error(request,'Sorry No Seats Available')
 				else:
 					messages.error(request,f'Please select seats upto {event.seats}.')
 				return redirect('ticket_book',event_id=event_id)
+			if datetime.datetime.now().time() > event.time and datetime.date.today() >= event.date :
+				messages.error(request,'Booking time is over.Event started.')
+				return redirect('ticket_book',event_id=event_id)
+			
+
+			
 			booking=Booking.objects.create(
 				amount=event.event_price* no_of_person,
 				no_of_person=no_of_person,
@@ -79,3 +90,16 @@ def ticket_confirm(request,ticket_id):
 def my_tickets(request):
 	tickets=Ticket.objects.filter(user=request.user)
 	return render(request,'eventbooking/my_tickets.html',{"tickets":tickets})
+
+#@login_required(login_url='login_page')
+@user_passes_test(lambda user: user.is_active and user.is_superuser, login_url='logout')
+def create_event(request):
+	if request.method=='POST':
+		form=EventCreationForm(request.POST,request.FILES)
+		if form.is_valid():
+			form.save()
+			return redirect('home')
+
+
+	form = EventCreationForm()
+	return render(request,'eventbooking/event_creation.html',{"form":form})

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1>EVENT CREATION PAGE</h1>
+
+<div>
+
+		<form method="POST" style="text-align: center;" enctype="multipart/form-data">
+			{% csrf_token %}
+			<fieldset>
+				<legend>New Event:</legend>
+					
+					{{ form|crispy }}
+			
+			</fieldset>
+		<div>
+			
+			<button type="submit">Create</button>	
+			
+		</div>
+	</form>
+		
+</div>
+
+{%  endblock %}

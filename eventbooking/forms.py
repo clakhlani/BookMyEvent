@@ -1,5 +1,5 @@
 from django import forms
-from .models import Ticket,Booking
+from .models import Ticket,Booking,Event
 
 
 class TicketBookingForm(forms.ModelForm):
@@ -16,3 +16,8 @@ class PaymentForm(forms.ModelForm):
 	class Meta:
 		model = Ticket
 		fields = ['payment_method']
+
+class EventCreationForm(forms.ModelForm):
+	class Meta:
+		model=Event
+		fields='__all__'
