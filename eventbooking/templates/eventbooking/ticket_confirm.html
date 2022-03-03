@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1>Booking Successfull!!!</h1>
+<div>
+
+	<table>
+		<tr>
+			<td>Ticket ID</td>
+			<td>{{ticket.id}}</td>
+		</tr>
+		<tr>
+			<td>Event</td>
+			<td>{{ticket.booking.event.name}}</td>
+		</tr>
+		<tr>
+			<td>Date</td>
+			<td>{{ticket.booking.event.date}}</td>
+		</tr>
+		<tr>
+			<td>Time</td>
+			<td>{{ticket.booking.event.time}}</td>
+		</tr>
+		<tr>
+			<td>Booking Date</td>
+			<td>{{ticket.date_booked}}</td>
+		</tr>
+		<tr>
+			<td>No Of Person</td>
+			<td>{{ticket.booking.no_of_person}}</td>
+		</tr>
+		<tr>
+			<td>Amount</td>
+			<td>{{ticket.booking.amount}}</td>
+		</tr>
+		<tr>
+			<td>Payment Method</td>
+			<td>{{ticket.payment_method}}</td>
+		</tr>
+		
+	</table>
+</div>
+
+{% endblock %}

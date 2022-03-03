@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1>Ticket Booking Page</h1>
+<div>
+
+		<form method="POST" style="text-align: center;">
+			{% csrf_token %}
+			<fieldset>
+				<legend> Book Ticket:</legend>
+					<h4>Event: {{event.name}}</h4>
+					<h4>Price: {{event.event_price}}</h4>
+					{{ form|crispy}}
+			</fieldset>
+		<div>
+			
+			<button type="submit">Proceed</button>	
+			
+		</div>
+	</form>
+		
+</div>
+
+{% endblock %}

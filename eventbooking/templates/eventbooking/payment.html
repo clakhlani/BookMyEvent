@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1>Payment Page</h1>
+<div>
+
+		<form method="POST" style="text-align: center;">
+			{% csrf_token %}
+			<fieldset>
+				<legend>Payment:</legend>
+					<h4>Booking ID : {{booking.id}}</h4>
+					<h4>Event      : {{booking.event.name}}</h4>
+					<h4>Date       : {{booking.event.date}}</h4>
+					<h4>No of Per  : {{booking.no_of_person}}</h4>
+					<h4>Amount     : {{booking.amount}} </h4>
+					{{ form|crispy }}
+			
+			</fieldset>
+		<div>
+			
+			<button type="submit">Pay Amount</button>	
+			
+		</div>
+	</form>
+		
+</div>
+
+{% endblock %}

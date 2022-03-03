@@ -3,5 +3,25 @@
 <h1>EVENTS PAGE</h1>
 <div>
 	<h3>{{event.name}}</h3>
+	<div style="display: block;margin-left:auto; margin-right:auto;width: 50%;" >
+			
+			<img src="{{event.image.url }}" alt="img" style="margin-left:auto; margin-right:auto;" width= 100% height="400"  />
+			<h5> {{event.summary}}</h5>
+
+			<div>
+			<div style="float=left;">
+				Date: {{ event.date }}
+			</div>
+			<div style="float=right;">
+				Location: {{ event.location }}
+			</div>
+			<div>
+			<div>
+				Time: {{ event.time }}
+			</div>
+			<div>
+				<a href="{% url 'ticket_book' event.id %}"><button type="button">Book</button></a>
+			</div>
+		</div>
 </div>
 {% endblock %}

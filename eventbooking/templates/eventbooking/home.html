@@ -4,9 +4,13 @@
 
 <div>
 	{% for event in events %}
-		<div>
-			<h5><a href="{% url 'event' event.id %}"> {{event.id}} - {{event.name}}</a></h5>
+		<div style="display: block;margin-left:auto; margin-right: auto;width: 50%;" >
+			<a href="{% url 'event' event.id %}">
+			<img src="{{event.image.url }}" alt="img" width= 80% height="400"  />
+			<h5> {{event.id}} - {{event.name}}</a></h5>
 		</div>
+	{% endfor %}
 </div>
-{% endfor %}
+
+
 {% endblock %}
