@@ -1,6 +1,8 @@
 from django.shortcuts import render,redirect
 from .models import Event,Booking,Ticket
 from .forms import TicketBookingForm,PaymentForm
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 import datetime
 
 def home_page(request):
@@ -15,7 +17,7 @@ def event_page(request,event_id):
 
 	return render(request,'eventbooking/events.html',context)
 
-
+@login_required(login_url='login_page')
 def ticket_booking(request,event_id):
 
 	event=Event.objects.get(id=event_id)
@@ -23,6 +25,12 @@ def ticket_booking(request,event_id):
 		form=TicketBookingForm(request.POST)
 		if form.is_valid():
 			no_of_person=form.cleaned_data["no_of_per"]
+			if no_of_person > event.seats:
+				if event.seats == 0:
+					messages.error(request,'Sorry No Seats Available')
+				else:
+					messages.error(request,f'Please select seats upto {event.seats}.')
+				return redirect('ticket_book',event_id=event_id)
 			booking=Booking.objects.create(
 				amount=event.event_price* no_of_person,
 				no_of_person=no_of_person,
@@ -35,6 +43,8 @@ def ticket_booking(request,event_id):
 	context={"form":form,"event":event}
 	return render(request,"eventbooking/ticket_book.html",context)
 
+
+@login_required(login_url='login_page')
 def payment(request,booking_id):
 	booking=Booking.objects.get(id=booking_id)
 
@@ -59,6 +69,13 @@ def payment(request,booking_id):
 	return render(request,'eventbooking/payment.html',context)
 
 
+@login_required(login_url='login_page')
 def ticket_confirm(request,ticket_id):
 	ticket=Ticket.objects.get(id=ticket_id)
 	return render(request,'eventbooking/ticket_confirm.html',{"ticket":ticket})
+
+
+@login_required(login_url='login_page')
+def my_tickets(request):
+	tickets=Ticket.objects.filter(user=request.user)
+	return render(request,'eventbooking/my_tickets.html',{"tickets":tickets})

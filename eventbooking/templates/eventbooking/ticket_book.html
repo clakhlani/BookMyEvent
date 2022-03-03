@@ -8,6 +8,11 @@
 			{% csrf_token %}
 			<fieldset>
 				<legend> Book Ticket:</legend>
+					{% if messages %}
+						{% for message in messages %}
+							<h5><font color="red">{{message}}</font></h5>
+						{% endfor %}
+					{% endif %}
 					<h4>Event: {{event.name}}</h4>
 					<h4>Price: {{event.event_price}}</h4>
 					{{ form|crispy}}
