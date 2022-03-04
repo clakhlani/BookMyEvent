@@ -17,7 +17,7 @@ class PaymentForm(forms.ModelForm):
 		model = Ticket
 		fields = ['payment_method']
 
-class EventCreationForm(forms.ModelForm):
+class EventForm(forms.ModelForm):
 	class Meta:
 		model=Event
 		fields='__all__'

@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from .models import Event,Booking,Ticket
-from .forms import TicketBookingForm,PaymentForm,EventCreationForm
+from .forms import TicketBookingForm,PaymentForm,EventForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 import datetime
@@ -102,13 +102,32 @@ def create_event(request):
 
 
 	form = EventCreationForm()
-	return render(request,'eventbooking/event_creation.html',{"form":form})
+	return render(request,'eventbooking/event_create_update.html',{"form":form})
 
 
 @user_passes_test(lambda user: user.is_active and user.is_superuser, login_url='logout')
 def update_event(request,event_id):
 	event=Event.objects.get(id=event_id)
 
+	if request.method=='POST':
+		form = EventForm(request.POST,request.FILES)
+		if form.is_valid():
+			event.name= request.POST.get('name')
+			event.summary=request.POST.get('summary')			
+			event.seats=request.POST.get('seats')
+			event.event_price=request.POST.get('event_price')
+			event.date=request.POST.get('date')
+			event.time=request.POST.get('time')
+			event.city=request.POST.get('city')
+			event.location=request.POST.get('location')
+			event.event_type=request.POST.get('event_type')
+			if request.POST.get('image') != '':
+				event.image=request.POST.get('image')
+			
+			event.save()
+			
+			return redirect('event', event_id=event_id)
 
-	form=EventCreationForm(instance=event)
-	return render(request,'eventbooking/event_creation.html',{'form':form})
+
+	form=EventForm(instance=event)
+	return render(request,'eventbooking/event_create_update.html',{'form':form})
