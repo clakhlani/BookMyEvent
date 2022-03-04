@@ -10,5 +10,6 @@ urlpatterns = [
     path('ticket-confirm/<str:ticket_id>',views.ticket_confirm,name="ticket_confirm"),
     path('mytickets',views.my_tickets,name='mytickets'),
     path('create-event',views.create_event,name='create_event'),
+    path('update-event/<str:event_id>',views.update_event,name='update_event'),
 
 ]

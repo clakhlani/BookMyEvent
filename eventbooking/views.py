@@ -103,3 +103,12 @@ def create_event(request):
 
 	form = EventCreationForm()
 	return render(request,'eventbooking/event_creation.html',{"form":form})
+
+
+@user_passes_test(lambda user: user.is_active and user.is_superuser, login_url='logout')
+def update_event(request,event_id):
+	event=Event.objects.get(id=event_id)
+
+
+	form=EventCreationForm(instance=event)
+	return render(request,'eventbooking/event_creation.html',{'form':form})

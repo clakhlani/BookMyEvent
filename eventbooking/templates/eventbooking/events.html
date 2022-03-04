@@ -23,7 +23,7 @@
 				<a href="{% url 'ticket_book' event.id %}"><button type="button">Book</button></a>
 			</div>
 			{% if request.user.is_superuser %}
-				<a href="#"><button type="button">Update</button></a>
+				<a href="{% url 'update_event' event.id %}"><button type="button">Update</button></a>
 			{% endif %}
 			<div>
 				

@@ -1,8 +1,13 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<h1>EVENT CREATION PAGE</h1>
 
+
+{% if 'update-event' in request.path_info %}
+	<h1>EVENT UPDATE PAGE</h1>
+{% else %}
+	<h1>EVENT CREATION PAGE</h1>
+{% endif %}
 <div>
 
 		<form method="POST" style="text-align: center;" enctype="multipart/form-data">
