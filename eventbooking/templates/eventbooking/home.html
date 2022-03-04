@@ -3,8 +3,10 @@
 <h1>HOME PAGE</h1>
 
 <div>
+	<form method="POST">
+		{% csrf_token %}
 	<label for="City">City:</label>
-	<select id="City">
+	<select id="City" name="City">
 		
 		<option value="ALL">ALL</option>
 		{% for city in cities %}
@@ -12,13 +14,15 @@
 		{% endfor %}
 	</select>
 	<label for="Genre">Genre:</label>
-	<select id="Genre">
+	<select id="Genre" name="Genre">
 		
 		<option value="ALL">ALL</option>
 		{% for genre in genres %}
 			<option value="{{genre.event_type}}">{{genre.event_type}}</option>
 		{% endfor %}
 	</select>
+	<button type="Submit" method="POST">Search</button>
+</form>
 </div>
 
 

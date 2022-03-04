@@ -9,8 +9,22 @@ def home_page(request):
 	events=Event.objects.all()
 	cities=Event.objects.values('city').distinct()
 	genres=Event.objects.values('event_type').distinct()
-	context={"events":events,"cities":cities,"genres":genres}
 	
+
+	if request.method=="POST":
+		city=request.POST.get("City")
+		genre=request.POST.get("Genre")
+
+		if city !="ALL" and genre == "ALL":
+			events=Event.objects.filter(city=city)
+
+		if genre != "ALL" and city == "ALL":
+			events=Event.objects.filter(event_type=genre)
+
+		if city != "ALL" and genre != "ALL":
+			events=Event.objects.filter(city=city).filter(event_type=genre)
+
+	context={"events":events,"cities":cities,"genres":genres}
 	return render(request,'eventbooking/home.html',context)
 
 def event_page(request,event_id):
