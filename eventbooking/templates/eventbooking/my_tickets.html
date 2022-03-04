@@ -46,6 +46,8 @@
 		</table>
 	</div>
 	<hr>
+
+	<a href="{% url 'cancel_ticket' ticket.id %}"><button>Cancel</button></a>
 	{% endfor %}
 {% endif %}
 {% endblock %}

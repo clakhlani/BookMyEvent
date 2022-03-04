@@ -2,6 +2,15 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <h1>Login Page</h1>
+
+
+{% if messages %}
+	{% for message in messages %}
+		<div >
+			<font color="green"></font>{{ message }}
+		</div>
+		{% endfor %}
+	{% endif %}
 <div>
 		<form method="POST" style="text-align: center;">
 			{% csrf_token %}

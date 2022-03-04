@@ -3,7 +3,7 @@
 <head>
 	<title>BookMyEvent</title>
 </head>
-<body>
+<body style="background-color: #121212;">
 	<a href="{% url 'home' %}">
 		<h3>BookMyEvent</h3>
 	</a>
@@ -22,13 +22,9 @@
 	</a>
 	</a>
 	<hr>
-	{% if messages %}
-	{% for message in messages %}
-		<div class="alert alert-{{ message.tags }}" >
-			{{ message }}
-		</div>
-		{% endfor %}
-	{% endif %}
+	
+	<div>
 	{% block content %}{% endblock %}
+	</div>
 </body>
 </html>

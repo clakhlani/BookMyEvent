@@ -83,6 +83,30 @@ def ticket_booking(request,event_id):
 	return render(request,"eventbooking/ticket_book.html",context)
 
 
+@login_required
+def cancel_ticket(request,ticket_id):
+	ticket = Ticket.objects.get(id=ticket_id)
+	print(ticket)
+	if ticket == None:
+		messages.error(request,f'No Ticket Available !!!!')
+		return render(request,'eventbooking/cancel_ticket.html')
+	if request.user != ticket.user:
+		messages.error(request,f'Unauthorized Access !!!!')
+		return render(request,'eventbooking/cancel_ticket.html')
+	if request.method=='POST':
+		event=Event.objects.get(id=ticket.booking.event.id)
+		seats=ticket.booking.no_of_person
+		#current_seats=event.seats
+		event.seats=event.seats+seats
+		print(event.seats)
+		event.save()
+		ticket.delete()
+
+		return redirect('mytickets', ticket_id=ticket_id )
+
+	return render(request,'eventbooking/cancel_ticket.html',{"ticket": ticket}) 
+
+
 @login_required(login_url='login_page')
 def payment(request,booking_id):
 	booking=Booking.objects.get(id=booking_id)
