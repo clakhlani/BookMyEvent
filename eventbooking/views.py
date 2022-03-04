@@ -8,7 +8,9 @@ import datetime
 def home_page(request):
 	events=Event.objects.all()
 	cities=Event.objects.values('city').distinct()
-	context={"events":events,"cities":cities}
+	genres=Event.objects.values('event_type').distinct()
+	context={"events":events,"cities":cities,"genres":genres}
+	
 	return render(request,'eventbooking/home.html',context)
 
 def event_page(request,event_id):

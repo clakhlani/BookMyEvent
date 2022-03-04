@@ -3,6 +3,26 @@
 <h1>HOME PAGE</h1>
 
 <div>
+	<label for="City">City:</label>
+	<select id="City">
+		
+		<option value="ALL">ALL</option>
+		{% for city in cities %}
+			<option value="{{city.city}}">{{city.city}}</option>
+		{% endfor %}
+	</select>
+	<label for="Genre">Genre:</label>
+	<select id="Genre">
+		
+		<option value="ALL">ALL</option>
+		{% for genre in genres %}
+			<option value="{{genre.event_type}}">{{genre.event_type}}</option>
+		{% endfor %}
+	</select>
+</div>
+
+
+<div>
 	{% for event in events %}
 		<div style="display: block;margin-left:auto; margin-right: auto;width: 50%;" >
 			<a href="{% url 'event' event.id %}">
