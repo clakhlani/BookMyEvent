@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>REGISTERED EVENTS</h1>
+
+
+<div>
+	{% for ticket in tickets %}
+		<div style="display: block;margin-left:auto; margin-right: auto;width: 50%;" >
+			<a href="{% url 'event' ticket.booking.event.id %}">
+			<img src="{{ticket.booking.event.image.url }}" alt="img" width= 80% height="400"  />
+			<h5> {{ticket.booking.event.id}} - {{tickt.booking.event.name}}</a></h5>
+			<a href="{% url 'ticket_confirm' ticket.id %}">Ticket ID : {{ticket.id}}</a>
+		</div>
+	{% endfor %}
+</div>
+{% endblock %}

@@ -5,26 +5,43 @@
 <div>
 	<form method="POST">
 		{% csrf_token %}
+		
 	<label for="City">City:</label>
 	<select id="City" name="City">
 		
 		<option value="ALL">ALL</option>
 		{% for city in cities %}
+			{% if city.city == selected_city %}
+			<option value="{{city.city}}" selected>{{city.city}}</option>
+			{% else %}
 			<option value="{{city.city}}">{{city.city}}</option>
+			{% endif %}
 		{% endfor %}
 	</select>
+
+	
 	<label for="Genre">Genre:</label>
 	<select id="Genre" name="Genre">
 		
 		<option value="ALL">ALL</option>
 		{% for genre in genres %}
+			{% if genre.event_type == selected_genre %}
+			<option value="{{genre.event_type}}" selected>{{genre.event_type}}</option>
+			{% else %}
 			<option value="{{genre.event_type}}">{{genre.event_type}}</option>
+			{% endif %}
 		{% endfor %}
 	</select>
-	<button type="Submit" method="POST">Search</button>
+	<button type="submit">Search</button>
 </form>
 </div>
 
+
+{% if messages%}
+{% for message in messages %}
+	<h3>{{message}}</h3>
+{% endfor %}
+{% endif %}
 
 <div>
 	{% for event in events %}
@@ -35,6 +52,5 @@
 		</div>
 	{% endfor %}
 </div>
-
 
 {% endblock %}

@@ -11,5 +11,5 @@ urlpatterns = [
     path('mytickets',views.my_tickets,name='mytickets'),
     path('create-event',views.create_event,name='create_event'),
     path('update-event/<str:event_id>',views.update_event,name='update_event'),
-
+    path('registered-events',views.registered_events,name='registered_events'),
 ]

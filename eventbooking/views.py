@@ -3,29 +3,41 @@ from .models import Event,Booking,Ticket
 from .forms import TicketBookingForm,PaymentForm,EventForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.paginator import Paginator
 import datetime
 
 def home_page(request):
 	events=Event.objects.all()
 	cities=Event.objects.values('city').distinct()
 	genres=Event.objects.values('event_type').distinct()
-	
 
-	if request.method=="POST":
+	selected_city='ALL'
+	selected_genre='ALL'
+
+	if request.method=='POST':
+
+
 		city=request.POST.get("City")
 		genre=request.POST.get("Genre")
 
 		if city !="ALL" and genre == "ALL":
 			events=Event.objects.filter(city=city)
+			selected_city=city
 
-		if genre != "ALL" and city == "ALL":
+		elif genre != "ALL" and city == "ALL":
 			events=Event.objects.filter(event_type=genre)
+			selected_genre=genre
 
-		if city != "ALL" and genre != "ALL":
+		elif city != "ALL" and genre != "ALL":
 			events=Event.objects.filter(city=city).filter(event_type=genre)
+			selected_city=city
+			selected_genre=genre
 
-	context={"events":events,"cities":cities,"genres":genres}
+	if events.count()==0:
+		messages.info(request,f'No Matching Events...')	
+	context={"events":events,"cities":cities,"genres":genres,"selected_city":selected_city,"selected_genre":selected_genre}
 	return render(request,'eventbooking/home.html',context)
+
 
 def event_page(request,event_id):
 	event= Event.objects.get(id=event_id)
@@ -111,13 +123,13 @@ def my_tickets(request):
 @user_passes_test(lambda user: user.is_active and user.is_superuser, login_url='logout')
 def create_event(request):
 	if request.method=='POST':
-		form=EventCreationForm(request.POST,request.FILES)
+		form=EventForm(request.POST,request.FILES)
 		if form.is_valid():
 			form.save()
 			return redirect('home')
 
 
-	form = EventCreationForm()
+	form = EventForm()
 	return render(request,'eventbooking/event_create_update.html',{"form":form})
 
 
@@ -147,3 +159,13 @@ def update_event(request,event_id):
 
 	form=EventForm(instance=event)
 	return render(request,'eventbooking/event_create_update.html',{'form':form})
+
+
+@login_required(login_url='login_page')
+def registered_events(request):
+	tickets=Ticket.objects.filter(user=request.user)
+	
+	return render(request,'eventbooking/registered_events.html',{"tickets":tickets})
+
+			#Event.objects.filter(id=booking.event.id)
+	#print(events)
