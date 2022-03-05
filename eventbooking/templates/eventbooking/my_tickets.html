@@ -45,9 +45,14 @@
 			
 		</table>
 	</div>
-	<hr>
-
+	{% if  timenow > ticket.booking.event.time and ticket.booking.event.date <= tomdate %}	
+	{% else %}	
 	<a href="{% url 'cancel_ticket' ticket.id %}"><button>Cancel</button></a>
+	{% endif %}
+	<hr>
 	{% endfor %}
+		
+	
+	
 {% endif %}
 {% endblock %}

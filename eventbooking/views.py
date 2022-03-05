@@ -4,7 +4,7 @@ from .forms import TicketBookingForm,PaymentForm,EventForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
-import datetime
+import datetime 
 
 def home_page(request):
 	events=Event.objects.all()
@@ -86,21 +86,29 @@ def ticket_booking(request,event_id):
 @login_required
 def cancel_ticket(request,ticket_id):
 	ticket = Ticket.objects.get(id=ticket_id)
-	print(ticket)
+
 	if ticket == None:
 		messages.error(request,f'No Ticket Available !!!!')
 		return render(request,'eventbooking/cancel_ticket.html')
+	
 	if request.user != ticket.user:
 		messages.error(request,f'Unauthorized Access !!!!')
 		return render(request,'eventbooking/cancel_ticket.html')
+
+	timenow=datetime.datetime.now().time()
+	tomdate=datetime.date.today()+datetime.timedelta(days=1)
+
+	if  timenow > ticket.booking.event.time and ticket.booking.event.date <= tomdate:
+		messages.error(request,f'Ticket cannot be cancelled. Less than 24 hours for the event.')
+		return render(request,'eventbooking/cancel_ticket.html')
+	
 	if request.method=='POST':
 		event=Event.objects.get(id=ticket.booking.event.id)
 		seats=ticket.booking.no_of_person
 		#current_seats=event.seats
 		event.seats=event.seats+seats
-		print(event.seats)
-		event.save()
-		ticket.delete()
+		'''event.save()
+		ticket.delete()'''
 
 		return redirect('mytickets', ticket_id=ticket_id )
 
@@ -141,7 +149,10 @@ def ticket_confirm(request,ticket_id):
 @login_required(login_url='login_page')
 def my_tickets(request):
 	tickets=Ticket.objects.filter(user=request.user)
-	return render(request,'eventbooking/my_tickets.html',{"tickets":tickets})
+	tomdate=datetime.date.today() + datetime.timedelta(days=1)
+	timenow=datetime.datetime.now().time()
+	context={'tickets':tickets,'tomdate':tomdate,'timenow':timenow}
+	return render(request,'eventbooking/my_tickets.html',context)
 
 #@login_required(login_url='login_page')
 @user_passes_test(lambda user: user.is_active and user.is_superuser, login_url='logout')
