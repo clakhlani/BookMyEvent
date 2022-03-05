@@ -77,8 +77,32 @@ class UserRegistrationTest(TestCase):
 			city='Kolkata',
 			location='ABC Street',
 			event_type='Music',
+				)
+
+
+
+		self.event2=Event.objects.create(name= 'Test Event',
+			summary="This is a dummy event",			
+			seats=0,
+			event_price=200.00,
+			date='2022-03-20',
+			time="19:00:00",
+			city='Kolkata',
+			location='ABC Street',
+			event_type='Music',
 			)
 
+
+		self.event3=Event.objects.create(name= 'Test Event',
+			summary="This is a dummy event",			
+			seats=30,
+			event_price=200.00,
+			date='2022-03-05',
+			time="19:00:00",
+			city='Kolkata',
+			location='ABC Street',
+			event_type='Music',
+			)
 		user = User.objects.create_user(username='newuser',password='new@1234',email='newuser@email.com')
 		user.save()
 
@@ -90,10 +114,21 @@ class UserRegistrationTest(TestCase):
 			no_of_person=4,
 			event=self.event,
 			)
-
+		self.booking3= Booking.objects.create(amount=6000,
+			no_of_person=4,
+			event=self.event3,
+			)
 
 		self.ticket=Ticket.objects.create(
 			booking=self.booking,
+			date_booked='2022-03-22',
+			user = user,
+			payment_method = 'Credit Card',
+			)
+
+
+		self.ticket3=Ticket.objects.create(
+			booking=self.booking3,
 			date_booked='2022-03-22',
 			user = user,
 			payment_method = 'Credit Card',
@@ -281,3 +316,86 @@ class UserRegistrationTest(TestCase):
 
 		self.assertEquals(response.status_code,200)
 		self.assertTemplateUsed(response,'eventbooking/payment.html')
+
+
+
+	def test_payment_post(self):
+		
+
+		user =User.objects.get(username='newuser')
+		login=self.client.login(username='newuser',password='new@1234')
+		response=self.client.post(reverse('payment',args=[self.booking.id]),{'booking':self.booking,
+			'date_booked': datetime.date.today(),
+			'user' : user,
+			'payment_method' : 'Credit Card'})
+
+		
+
+		self.assertEquals(response.status_code,302)
+	
+
+	def test_ticket_cancel_get(self):
+
+		login=self.client.login(username='newuser',password='new@1234')
+
+		response=self.client.get(reverse('cancel_ticket',args=[self.ticket.id]))
+		response2=self.client.get(reverse('cancel_ticket',args=[2]))
+		response3=self.client.get(reverse('cancel_ticket',args=[self.ticket3.id]))
+
+
+		self.client.login(username='admin',password='admin@123')
+
+		response4=self.client.get(reverse('cancel_ticket',args=[self.ticket.id]))
+
+		
+
+		self.assertEqual(str(response.context['user']),'newuser')
+
+		self.assertEquals(response.status_code,200)
+		self.assertTemplateUsed(response,'eventbooking/cancel_ticket.html')
+
+		self.assertEquals(response2.status_code,200)
+		self.assertTemplateUsed(response2,'eventbooking/cancel_ticket.html')
+
+		self.assertEquals(response3.status_code,200)
+		self.assertTemplateUsed(response3,'eventbooking/cancel_ticket.html')
+
+		self.assertEquals(response4.status_code,200)
+		self.assertTemplateUsed(response4,'eventbooking/cancel_ticket.html')
+
+
+
+	def test_ticket_cancel_post(self):
+		
+		login=self.client.login(username='newuser',password='new@1234')
+		response=self.client.post(reverse('cancel_ticket',args=[self.ticket.id]),{})
+
+		
+
+		self.assertEquals(response.status_code,302)
+
+
+
+	def test_ticket_booking_post(self):
+		
+		login=self.client.login(username='newuser',password='new@1234')
+		response=self.client.post(reverse('ticket_book',args=[self.event.id]),{'amount':800.00,'no_of_person':4,'event':self.event})
+		response2=self.client.post(reverse('ticket_book',args=[self.event.id]),{'amount':800.00,'no_of_person':0,'event':self.event})
+		response3=self.client.post(reverse('ticket_book',args=[self.event.id]),{'amount':800.00,'no_of_person':40,'event':self.event})
+		response3=self.client.post(reverse('ticket_book',args=[self.event2.id]),{'amount':800.00,'no_of_person':2,'event':self.event2})
+		response3=self.client.post(reverse('ticket_book',args=[self.event3.id]),{'amount':800.00,'no_of_person':2,'event':self.event3})
+		
+
+		self.assertEquals(response.status_code,302)
+
+
+	def test_logut_get(self):
+		login=self.client.login(username='newuser',password='new@1234')
+
+		response=self.client.get(reverse('logout'))
+
+		self.assertEquals(response.status_code,302)
+
+	def registration_post(self):
+
+		response=self.client.post(reverse('regitser'),{'username':'testingUser','password1':'First@pass','email': 'testing@gmail.com'})

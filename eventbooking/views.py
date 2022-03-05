@@ -53,7 +53,7 @@ def ticket_booking(request,event_id):
 	if request.method=="POST":
 		form=TicketBookingForm(request.POST)
 		if form.is_valid():
-			no_of_person=form.cleaned_data["no_of_per"]
+			no_of_person=form.cleaned_data["no_of_person"]
 			
 			if no_of_person == 0:
 				messages.error(request,'Please enter 1 or more Number Of Person')
@@ -65,7 +65,7 @@ def ticket_booking(request,event_id):
 				else:
 					messages.error(request,f'Please select seats upto {event.seats}.')
 				return redirect('ticket_book',event_id=event_id)
-			if datetime.datetime.now().time() > event.time and datetime.date.today() >= event.date :
+			if (datetime.date.today() > event.date)   or (datetime.date.today()==event.date and datetime.datetime.now.time()> event.time):
 				messages.error(request,'Booking time is over.Event started.')
 				return redirect('ticket_book',event_id=event_id)
 			
@@ -100,9 +100,8 @@ def cancel_ticket(request,ticket_id):
 		return render(request,'eventbooking/cancel_ticket.html')
 
 	timenow=datetime.datetime.now().time()
-	tomdate=datetime.date.today()+datetime.timedelta(days=1)
-
-	if  timenow > ticket.booking.event.time and ticket.booking.event.date <= tomdate:
+	daybefore=ticket.booking.event.date - datetime.timedelta(days=1)
+	if (datetime.date.today() >= ticket.booking.event.date)   or (timenow > ticket.booking.event.time and datetime.date.today() == daybefore ):
 		messages.error(request,f'Ticket cannot be cancelled. Less than 24 hours for the event.')
 		return render(request,'eventbooking/cancel_ticket.html')
 	
@@ -191,7 +190,7 @@ def update_event(request,event_id):
 			event.event_type=request.POST.get('event_type')
 			if request.POST.get('image') != '':
 				event.image=request.POST.get('image')
-			
+	 		
 			event.save()
 			
 			return redirect('event', event_id=event_id)

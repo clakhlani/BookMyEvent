@@ -3,11 +3,9 @@ from .models import Ticket,Booking,Event
 
 
 class TicketBookingForm(forms.ModelForm):
-	no_of_per=forms.IntegerField(initial=0)
-	
 	class Meta:
 		model = Booking
-		fields = ['no_of_per']
+		fields = ['no_of_person']
 
 
 class PaymentForm(forms.ModelForm):
