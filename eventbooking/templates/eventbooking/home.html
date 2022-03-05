@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>HOME PAGE</h1>
+<h1 ><font color="white">HOME PAGE</font>	</h1>
 
 <div>
 	<form method="POST">
 		{% csrf_token %}
 		
-	<label for="City">City:</label>
+	<label for="City"><font color="white">City:</font></label>
 	<select id="City" name="City">
 		
 		<option value="ALL">ALL</option>
@@ -20,7 +20,7 @@
 	</select>
 
 	
-	<label for="Genre">Genre:</label>
+	<label for="Genre"><font color="white">Genre:</font></label>
 	<select id="Genre" name="Genre">
 		
 		<option value="ALL">ALL</option>
@@ -43,14 +43,22 @@
 {% endfor %}
 {% endif %}
 
-<div>
+<div >
 	{% for event in events %}
-		<div style="display: block;margin-left:auto; margin-right: auto;width: 50%;" >
-			<a href="{% url 'event' event.id %}">
-			<img src="{{event.image.url }}" alt="img" width= 80% height="400"  />
-			<h5> {{event.id}} - {{event.name}}</a></h5>
+		<div style="margin:auto;width: 50%; padding: 10px; border: 5px solid grey;" >
+				<a href="{% url 'event' event.id %}">
+				<center><h5><font color="white" >{{event.name}}</font></h5></center>
+				<center><img  src="{{event.image.url }}" alt="img" width= 80% height="400"  /></center></center>
+				</a>
 		</div>
+		<br>
 	{% endfor %}
 </div>
 
+<style type="text/css">
+.fontcolor{
+	color=white;
+}	
+
+</style>
 {% endblock %}

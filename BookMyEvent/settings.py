@@ -39,8 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'eventbooking.apps.EventbookingConfig',
+    'user.apps.UserConfig',
     'crispy_forms'
     ]
+
+
+AUTH_USER_MODEL='user.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from user.models import User
 from django.db.models.deletion import CASCADE , SET_NULL
 
 # Create your models here.
@@ -14,7 +14,7 @@ class Event(models.Model):
 	city=models.CharField(max_length=30)
 	location=models.CharField(max_length=50)
 	event_type=models.CharField(max_length=20, choices=(('Comedy','Comedy'),('Sports','Sports'),('Movie','Movie'),('Music','Music')),default=1)
-	image=models.ImageField(default='default.jpeg',upload_to='event_pics')
+	image=models.ImageField(default='default.jpg',upload_to='event_pics')
 
 	def __str__(self):
 		return self.name
