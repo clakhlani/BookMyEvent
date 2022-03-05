@@ -4,21 +4,22 @@
 
 
 {% if 'update-event' in request.path_info %}
-	<h1>EVENT UPDATE PAGE</h1>
+	<h1 class="fontdesc">EVENT UPDATE PAGE</h1>
 {% else %}
-	<h1>EVENT CREATION PAGE</h1>
+	<h1 class="fontdesc">EVENT CREATION PAGE</h1>
 {% endif %}
 <div>
 
-		<form method="POST" style="text-align: center;" enctype="multipart/form-data">
+		<form method="POST" style="text-align: center; margin:auto; width: 50%" enctype="multipart/form-data">
 			{% csrf_token %}
-			<fieldset>
+			<div style=" border: 2px solid grey;" class="fontdesc">
 				<legend>New Event:</legend>
 					
-					{{ form|crispy }}
+
+				<div style="padding-top: 10px; padding-bottom: 10px;">	{{ form|crispy }}  </div>
 			
-			</fieldset>
-		<div>
+			</div>
+		<div style="padding-top: 20px">
 
 		{% if 'update-event' in request.path_info %}
 			<button type="submit">Update</button>

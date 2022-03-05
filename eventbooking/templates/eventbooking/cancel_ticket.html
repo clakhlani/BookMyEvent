@@ -2,19 +2,27 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
-<h1>Ticket Cancel Page</h1>
+<h1 class="fontdesc">Ticket Cancel Page</h1>
 
 {% if messages %}
 	{% for message in messages %}
 		<h2><font color="red">{{message}}</font></h2>
 	{% endfor %}
 {% else %}
-	<h3> Are You Sure you want to delete ticket for {{ticket.booking.event.name}}  Ticket ID : {{ticket.id}}</h3>
+
+	{% for ticket in tickets %}
+
+	<h3 class="fontdesc"> Are You Sure you want to delete ticket for EVENT : {{ticket.booking.event.name}} </h3>
+	<h3 class="fontdesc">Ticket ID : {{ticket.id}}</h3>
+
+	{% endfor %}
 	<form method='POST'>
 	{% csrf_token %}
 	<button type = "Submit">Yes</button>
 	</form>
+	<div style="padding-top: 10px">
 	<a href="{% url 'mytickets' %}"><button>No</button></a>
+	</div>
 {% endif %}
 
 

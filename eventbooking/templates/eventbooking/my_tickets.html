@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<h1>Your Bookings</h1>
+<h1 class="fontdesc">Your Bookings</h1>
 <hr>
 {% if tickets.count == 0 %}
-<h4> No Bookings Yet....</h4>
+<h4 class="fontdesc"> No Bookings Yet....</h4>
 {% else %}	
 	{% for ticket in tickets %}
-	<div>
+	<div class="fontdesc" style="padding-top: 20px;">
 
 		<table>
 			<tr>
@@ -45,10 +45,12 @@
 			
 		</table>
 	</div>
+	<div style="padding-top: 10px; padding-bottom: 5px;">
 	{% if  timenow > ticket.booking.event.time and ticket.booking.event.date <= tomdate %}	
 	{% else %}	
 	<a href="{% url 'cancel_ticket' ticket.id %}"><button>Cancel</button></a>
 	{% endif %}
+	</div>
 	<hr>
 	{% endfor %}
 		

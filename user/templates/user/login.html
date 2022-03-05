@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<h1>Login Page</h1>
+<h1 class="fontdesc">Login Page</h1>
 
 
 {% if messages %}
@@ -11,22 +11,22 @@
 		</div>
 		{% endfor %}
 	{% endif %}
-<div>
-		<form method="POST" style="text-align: center;">
+<div class="fontdesc">
+		<form method="POST" style="text-align: center;margin:auto; width: 50%">
 			{% csrf_token %}
-			<fieldset>
+			<div style=" border: 2px solid grey; " >
 				<legend> Login:</legend>
 			
-			{{ form|crispy }}
-			</fieldset>
+			<div style="padding-bottom: 20px;padding-top: 10px"> {{ form|crispy }} </div>
+			</div >
 		
-		<div>
+		<div style="padding-top: 20px;">
 			<button type="submit">Sign In</button>
 		</div>
 	</form>
-		<div>
+		<div >
 			<small>
-				Create An Account? <a href="{% url 'register' %}">Sign Up</a>
+				Create An Account? <a href="{% url 'register' %}" style="color: #cdb5db;">Sign Up</a>
 			</small>
 		</div>
 		

@@ -1,23 +1,23 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<h1>Register Page</h1>
-<div>
-		<form method="POST" style="text-align: center;">
+<h1 class="fontdesc">Register Page</h1>
+<div class="fontdesc">
+		<form method="POST" style="text-align: center;margin:auto; width: 50%">
 			{% csrf_token %}
-			<fieldset>
+			<div style=" border: 2px solid grey;">
 				<legend> Register:</legend>
 			
-			{{ form|crispy }}
-			</fieldset>
+			<div style="padding-bottom: 20px;padding-top: 10px">{{form.as_p }} </div>	
+			</div>
 		
-		<div>
+		<div style="padding: 20px">
 			<button type="submit">Sign Up</button>
 		</div>
 	</form>
 		<div>
 			<small>
-				Already Have An Account? <a href="{% url 'login_page' %} ">Sign In</a>
+				Already Have An Account? <a href="{% url 'login_page' %} " style="color: #cdb5db">Sign In</a>
 			</small>
 		</div>
 		

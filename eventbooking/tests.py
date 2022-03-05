@@ -1,3 +1,283 @@
-from django.test import TestCase
+from django.test import TestCase , Client
+from eventbooking.models import Event, Booking, Ticket
+from user.models import User
+from django.urls import reverse
+import datetime
 
-# Create your tests here.
+
+class EventModelTest(TestCase):
+	@classmethod
+	def setUpTestData(cls):
+		Event.objects.create(name= 'Test Event',
+			summary="This is a dummy event",			
+			seats=25,
+			event_price=200.00,
+			date='2022-04-05',
+			time="19:00:00",
+			city='Kolkata',
+			location='ABC Street',
+			event_type='Music',
+			)
+
+	def test_str_return(self):
+		event=Event.objects.get(id=1)
+		self.assertEqual(str(event),event.name)
+				
+
+class TicketModelTest(TestCase):
+	@classmethod
+	def setUpTestData(cls):
+		event=Event.objects.create(name= 'Test Event',
+			summary="This is a dummy event",			
+			seats=25,
+			event_price=200.00,
+			date='2022-04-05',
+			time="19:00:00",
+			city='Kolkata',
+			location='ABC Street',
+			event_type='Music',
+			)
+		booking= Booking.objects.create(amount=6000,
+			no_of_person=4,
+			event=event,
+			)
+		user=User.objects.create(email="test@gmail.com",
+			username='testuser',
+			password='test@123',
+			)
+
+
+
+		Ticket.objects.create(
+			booking=booking,
+			date_booked='2022-03-22',
+			user = user,
+			payment_method = 'Credit Card',
+			)
+
+	def test_str_return(self):
+		ticket=Ticket.objects.get(id=1)
+		print(str(ticket))
+		self.assertEqual(str(ticket),ticket.booking.event.name)
+
+
+
+# Views Test case
+
+class UserRegistrationTest(TestCase):
+	
+	def setUp(self):
+		self.client=Client()
+		self.event=Event.objects.create(name= 'Test Event',
+			summary="This is a dummy event",			
+			seats=25,
+			event_price=200.00,
+			date='2022-04-05',
+			time="19:00:00",
+			city='Kolkata',
+			location='ABC Street',
+			event_type='Music',
+			)
+
+		user = User.objects.create_user(username='newuser',password='new@1234',email='newuser@email.com')
+		user.save()
+
+		admin_user=User.objects.create_superuser(email="admin@gmail.com",username='admin',password='admin@123')
+		admin_user.save()
+
+
+		self.booking= Booking.objects.create(amount=6000,
+			no_of_person=4,
+			event=self.event,
+			)
+
+
+		self.ticket=Ticket.objects.create(
+			booking=self.booking,
+			date_booked='2022-03-22',
+			user = user,
+			payment_method = 'Credit Card',
+			)
+
+
+	def test_registration_response(self):
+		
+		response=self.client.get(reverse('register'))
+
+		self.assertEquals(response.status_code,200)
+		self.assertTemplateUsed(response,'user/register.html')
+
+	
+
+	def test_home_page_response(self):
+		
+		response=self.client.get(reverse('home'))
+
+		self.assertEquals(response.status_code,200)
+		self.assertTemplateUsed(response,'eventbooking/home.html')
+
+	def test_home_page_post(self):
+		
+		response=self.client.post(reverse('home'),{"City":"Kolkata","Genre": "Music"})
+		response2=self.client.post(reverse('home'),{"City":"ALL","Genre": "Music"})
+		response3=self.client.post(reverse('home'),{"City":"Kolkata","Genre": "ALL"})
+		response4=self.client.post(reverse('home'),{"City":"Mumbai","Genre": "ALL"})
+
+		self.assertEquals(response.status_code,200)
+		self.assertTemplateUsed(response,'eventbooking/home.html')
+
+		self.assertEquals(response2.status_code,200)
+		self.assertTemplateUsed(response2,'eventbooking/home.html')
+
+		self.assertEquals(response3.status_code,200)
+		self.assertTemplateUsed(response3,'eventbooking/home.html')
+
+		self.assertEquals(response4.status_code,200)
+		self.assertTemplateUsed(response4,'eventbooking/home.html')
+
+	def test_event_page_response(self):
+				
+		response=self.client.get(reverse('event',args=[self.event.id]))
+
+		self.assertEquals(response.status_code,200)
+		self.assertTemplateUsed(response,'eventbooking/events.html')
+
+
+	def test_ticket_booking_get(self):
+
+		login=self.client.login(username='newuser',password='new@1234')
+
+
+
+		response=self.client.get(reverse('ticket_book',args=[self.event.id]))
+
+		self.assertEqual(str(response.context['user']),'newuser')
+
+		self.assertEquals(response.status_code,200)
+		self.assertTemplateUsed(response,'eventbooking/ticket_book.html')
+
+
+
+
+	def test_ticket_confirm_get(self):
+
+		login=self.client.login(username='newuser',password='new@1234')
+
+
+
+		response=self.client.get(reverse('ticket_confirm',args=[self.ticket.id]))
+
+		self.assertEqual(str(response.context['user']),'newuser')
+
+		self.assertEquals(response.status_code,200)
+		self.assertTemplateUsed(response,'eventbooking/ticket_confirm.html')
+
+
+
+	def test_my_ticket_get(self):
+
+		login=self.client.login(username='newuser',password='new@1234')
+
+
+
+		response=self.client.get(reverse('mytickets'))
+
+		self.assertEqual(str(response.context['user']),'newuser')
+
+		self.assertEquals(response.status_code,200)
+		self.assertTemplateUsed(response,'eventbooking/my_tickets.html')
+
+
+	def test_registered_events_get(self):
+
+		login=self.client.login(username='newuser',password='new@1234')
+
+
+
+		response=self.client.get(reverse('registered_events'))
+
+		self.assertEqual(str(response.context['user']),'newuser')
+
+		self.assertEquals(response.status_code,200)
+		self.assertTemplateUsed(response,'eventbooking/registered_events.html')
+
+
+	def test_crete_event_get(self):
+		
+		login=self.client.login(username='admin',password='admin@123')
+
+
+
+		response=self.client.get(reverse('create_event'))
+
+		
+
+		self.assertEquals(response.status_code,200)
+		self.assertTemplateUsed(response,'eventbooking/event_create_update.html')
+
+
+
+	def test_event_create_post(self):
+		
+		login=self.client.login(username='admin',password='admin@123')
+		response=self.client.post(reverse('create_event'),{'name': 'Test Event2',
+			'summary':'This is a dummy event2',			
+			'seats':30,
+			'event_price':200.00,
+			'date': datetime.date.today(),
+			'time':datetime.datetime.now().time(),
+			'city':'Kolkata',
+			'location':'ABC Street',
+			'event_type':'Music'})
+
+
+		
+
+		self.assertEquals(response.status_code,302)
+	
+
+
+
+	def test_update_event_get(self):
+		
+		login=self.client.login(username='admin',password='admin@123')
+
+
+
+		response=self.client.get(reverse('update_event',args=[self.event.id]))
+
+		
+
+		self.assertEquals(response.status_code,200)
+		self.assertTemplateUsed(response,'eventbooking/event_create_update.html')
+
+
+	def test_event_update_post(self):
+		
+		login=self.client.login(username='admin',password='admin@123')
+		response=self.client.post(reverse('update_event',args=[self.event.id]),{'name': 'Test Event3',
+			'summary':'This is a dummy event2',			
+			'seats':30,
+			'event_price':200.00,
+			'date': datetime.date.today(),
+			'time':datetime.datetime.now().time(),
+			'city':'Kolkata',
+			'location':'ABC Street',
+			'event_type':'Music'})
+
+
+		
+
+		self.assertEquals(response.status_code,302)
+		
+
+	def test_payment_get(self):
+
+		login=self.client.login(username='newuser',password='new@1234')
+
+		response=self.client.get(reverse('payment',args=[self.booking.id]))
+
+		self.assertEqual(str(response.context['user']),'newuser')
+
+		self.assertEquals(response.status_code,200)
+		self.assertTemplateUsed(response,'eventbooking/payment.html')

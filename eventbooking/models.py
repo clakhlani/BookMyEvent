@@ -34,4 +34,4 @@ class Ticket(models.Model):
 	payment_method = models.CharField(max_length=15)
 
 	def __str__(self):
-		return self.id 
+		return self.booking.event.name 

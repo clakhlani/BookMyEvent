@@ -49,6 +49,7 @@ def event_page(request,event_id):
 def ticket_booking(request,event_id):
 
 	event=Event.objects.get(id=event_id)
+
 	if request.method=="POST":
 		form=TicketBookingForm(request.POST)
 		if form.is_valid():
@@ -85,12 +86,15 @@ def ticket_booking(request,event_id):
 
 @login_required
 def cancel_ticket(request,ticket_id):
-	ticket = Ticket.objects.get(id=ticket_id)
+	tickets = Ticket.objects.filter(id=ticket_id)
 
-	if ticket == None:
+
+	if tickets.count() == 0:
 		messages.error(request,f'No Ticket Available !!!!')
 		return render(request,'eventbooking/cancel_ticket.html')
-	
+
+	ticket=tickets.first()
+			
 	if request.user != ticket.user:
 		messages.error(request,f'Unauthorized Access !!!!')
 		return render(request,'eventbooking/cancel_ticket.html')
@@ -102,17 +106,18 @@ def cancel_ticket(request,ticket_id):
 		messages.error(request,f'Ticket cannot be cancelled. Less than 24 hours for the event.')
 		return render(request,'eventbooking/cancel_ticket.html')
 	
+	
+	
 	if request.method=='POST':
 		event=Event.objects.get(id=ticket.booking.event.id)
 		seats=ticket.booking.no_of_person
-		#current_seats=event.seats
 		event.seats=event.seats+seats
-		'''event.save()
-		ticket.delete()'''
+		event.save()
+		ticket.delete()
 
-		return redirect('mytickets', ticket_id=ticket_id )
-
-	return render(request,'eventbooking/cancel_ticket.html',{"ticket": ticket}) 
+		return redirect('mytickets')
+	
+	return render(request,'eventbooking/cancel_ticket.html',{"tickets": tickets}) 
 
 
 @login_required(login_url='login_page')

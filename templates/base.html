@@ -8,14 +8,14 @@
 <style type="text/css"> 
 	.navcontainer{
 		display : grid;
-		grid-template-columns: 1fr 5fr 1fr 1fr 1fr 1fr;
+		grid-template-columns: 2fr 1fr 4fr 1fr 2fr 1fr 1fr;
 		background-color: #800517; 
 		font-family: Helvetica, Sans-Serif;
-		
+		text-align: center;
 
 	}
 	.fontcolor{
-		color: #cdb5db
+		color: #cdb5db;
 	}
 	.fontdesc{
 		color: white;
@@ -26,8 +26,11 @@
 	<div  class="navcontainer">
 	<div>	
 	<a href="{% url 'home' %}">
-		<h3 class="fontcolor"><strong>BookMyEvent</strong></h3>
+		<h3 class="fontcolor" style="padding-left: 10px"><strong >BookMyEvent</strong></h3>
 	</a>
+	</div>
+	<div >
+		<a href="{% url 'home' %}"><h5 class="fontcolor">Home</h5></a>
 	</div>
 
 	<div>
