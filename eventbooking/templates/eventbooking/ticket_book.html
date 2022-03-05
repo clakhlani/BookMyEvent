@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<h1>Ticket Booking Page</h1>
+
+
+<h1 class= "fontdesc">Ticket Booking Page</h1>
 <div>
 
-		<form method="POST" style="text-align: center;">
+		<form method="POST" style="text-align: center; margin:auto; width: 50%">
 			{% csrf_token %}
-			<fieldset>
-				<legend> Book Ticket:</legend>
+			<div style=" border: 2px solid grey;" class="fontdesc">
+				<legend > Book Ticket:</legend>
 					{% if messages %}
 						{% for message in messages %}
 							<h5><font color="red">{{message}}</font></h5>
@@ -15,9 +17,10 @@
 					{% endif %}
 					<h4>Event: {{event.name}}</h4>
 					<h4>Price: {{event.event_price}}</h4>
-					{{ form|crispy}}
-			</fieldset>
-		<div>
+					<h4>Seat Available: {{event.seats}}</h4>
+					<div>{{ form.as_p}}</div>
+			</div>
+		<div style="padding-top: 20px">
 			
 			<button type="submit">Proceed</button>	
 			

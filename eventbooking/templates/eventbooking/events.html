@@ -1,7 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>EVENTS PAGE</h1>
-<div>
+
+<style type="text/css">
+	.buttoncontainer{
+		display :  grid;
+		grid-template-columns: 1fr 1fr 10fr ;
+	}
+	
+</style>
+<div class="fontdesc">
 	<h3>{{event.name}}</h3>
 	<div style="display: block;margin-left:auto; margin-right:auto;width: 50%;" >
 			
@@ -9,24 +16,27 @@
 			<h5> {{event.summary}}</h5>
 
 			<div>
-			<div style="float=left;">
+			<div>
 				Date: {{ event.date }}
 			</div>
-			<div style="float=right;">
+			<div>
 				Location: {{ event.location }}
 			</div>
-			<div>
-			<div>
+			<div >
 				Time: {{ event.time }}
 			</div>
+
 			<div>
-				<a href="{% url 'ticket_book' event.id %}"><button type="button">Book</button></a>
-			</div>
-			{% if request.user.is_superuser %}
-				<a href="{% url 'update_event' event.id %}"><button type="button">Update</button></a>
-			{% endif %}
-			<div>
+				<div>
+					<a href="{% url 'ticket_book' event.id %}"><button type="button">Book</button></a>
+				</div>
+				{% if request.user.is_superuser %}
+					<div>
+					<a href="{% url 'update_event' event.id %}"><button type="button">Update</button></a>
+					</div>
+				{% endif %}
 				
+			</div>
 			</div>
 		</div>
 </div>
