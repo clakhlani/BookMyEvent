@@ -87,9 +87,9 @@ WSGI_APPLICATION = 'BookMyEvent.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'BME',
-        'USER': 'postgres',
-        'PASSWORD': 'chin@1234',
+        'NAME': 'Database_Name',
+        'USER': 'Database_User',
+        'PASSWORD': 'Database_User_Password',
         'HOST': '127.0.0.1',
         'PORT' : '5432',
     }
