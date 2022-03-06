@@ -47,9 +47,13 @@
 	{% for event in events %}
 		<div style="margin:auto;width: 50%; padding: 10px; border: 5px solid grey;" >
 				<a href="{% url 'event' event.id %}">
-				<center><h5><font color="white" >{{event.name}}</font></h5></center>
+				<center><h4><font color="white" ><u>{{event.name}}</u></font></h4></center>
 				<center><img  src="{{event.image.url }}" alt="img" width= 80% height="400"  /></center></center>
 				</a>
+				<h5><font color="white"><center>City: {{event.city}} </center></font></h5><h5><font color="white"><center>      Genre: {{event.event_type}}</center></font></h5>
+		</div>
+		<div>
+			
 		</div>
 		<br>
 	{% endfor %}

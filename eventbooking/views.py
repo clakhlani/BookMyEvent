@@ -7,20 +7,21 @@ from django.core.paginator import Paginator
 import datetime 
 
 def home_page(request):
-	events=Event.objects.all()
-	cities=Event.objects.values('city').distinct()
-	genres=Event.objects.values('event_type').distinct()
+	'''View for homepage. Displays all the events.No login is required to view home page.
+		User can click on events to get more details. User can also filter events depending on City and Genre.'''
+	events=Event.objects.all()                                               #Getting all events from Database.
+	cities=Event.objects.values('city').distinct()                           
+	genres=Event.objects.values('event_type').distinct()                     #Getting distinct city and genre for particular events to be viewed.
 
 	selected_city='ALL'
 	selected_genre='ALL'
 
-	if request.method=='POST':
-
+	if request.method=='POST':                                               #Getting the filter query					
 
 		city=request.POST.get("City")
 		genre=request.POST.get("Genre")
 
-		if city !="ALL" and genre == "ALL":
+		if city !="ALL" and genre == "ALL":                                  #Different test cases for city and genre selected.   
 			events=Event.objects.filter(city=city)
 			selected_city=city
 
@@ -33,29 +34,35 @@ def home_page(request):
 			selected_city=city
 			selected_genre=genre
 
-	if events.count()==0:
+	if events.count()==0:                                                    #If no matching events for city and genre selected show message. 
 		messages.info(request,f'No Matching Events...')	
 	context={"events":events,"cities":cities,"genres":genres,"selected_city":selected_city,"selected_genre":selected_genre}
-	return render(request,'eventbooking/home.html',context)
+	return render(request,'eventbooking/home.html',context)                   
 
 
 def event_page(request,event_id):
-	event= Event.objects.get(id=event_id)
+	'''View to display all the information for the particular event selected.
+		User also has option to Book the event . But login is required for it.
+		Admin user can update events.'''
+	event= Event.objects.get(id=event_id)            #Getting the event selected.
 	context={"event":event}
 
 	return render(request,'eventbooking/events.html',context)
 
 @login_required(login_url='login_page')
 def ticket_booking(request,event_id):
-
+	'''View to book tickets for the event selected.
+		User neds to enter the no of persons for the booking.
+		Checks present if booking done for 0 person , no of person > seats available,all seats booked and booking window closed.
+		Login is required.''' 
 	event=Event.objects.get(id=event_id)
 
 	if request.method=="POST":
 		form=TicketBookingForm(request.POST)
 		if form.is_valid():
-			no_of_person=form.cleaned_data["no_of_person"]
+			no_of_person=form.cleaned_data["no_of_person"]                               #Getting the no of persons entred by user
 			
-			if no_of_person == 0:
+			if no_of_person == 0:                                                        #Checks for value entered.
 				messages.error(request,'Please enter 1 or more Number Of Person')
 				return redirect('ticket_book',event_id=event_id)
 
@@ -69,15 +76,15 @@ def ticket_booking(request,event_id):
 				messages.error(request,'Booking time is over.Event started.')
 				return redirect('ticket_book',event_id=event_id)
 			
-
-			
+                                                                        
+																		#If checks pased create a Booking entry
 			booking=Booking.objects.create(
 				amount=event.event_price* no_of_person,
 				no_of_person=no_of_person,
 				event=event
 				)
 			
-			return redirect('payment',booking_id=booking.id)
+			return redirect('payment',booking_id=booking.id)             #Redirect to payment page.
 	
 	form=TicketBookingForm()
 	context={"form":form,"event":event}
@@ -86,10 +93,14 @@ def ticket_booking(request,event_id):
 
 @login_required
 def cancel_ticket(request,ticket_id):
-	tickets = Ticket.objects.filter(id=ticket_id)
+	'''View to cancel ticket. User can cancel tickt 24 hours before the event.
+		Only user those whose bought the ticket can cancel it
+		User asked before cancellation if they are sure they want to cancel ticket.
+		Login is required.'''
+	tickets = Ticket.objects.filter(id=ticket_id)                       #Getting the ticket to be cancelled.
 
 
-	if tickets.count() == 0:
+	if tickets.count() == 0:											#Checks for verification
 		messages.error(request,f'No Ticket Available !!!!')
 		return render(request,'eventbooking/cancel_ticket.html')
 
@@ -107,23 +118,27 @@ def cancel_ticket(request,ticket_id):
 	
 	
 	
-	if request.method=='POST':
+	if request.method=='POST':												#If user approves then ticket is cancelled.	
 		event=Event.objects.get(id=ticket.booking.event.id)
 		seats=ticket.booking.no_of_person
 		event.seats=event.seats+seats
 		event.save()
 		ticket.delete()
 
-		return redirect('mytickets')
+		return redirect('mytickets')                                       #Redirect to my tickets page after cancellation.
 	
 	return render(request,'eventbooking/cancel_ticket.html',{"tickets": tickets}) 
 
 
 @login_required(login_url='login_page')
 def payment(request,booking_id):
-	booking=Booking.objects.get(id=booking_id)
-
-	if request.method=="POST":
+	'''View for the payment of tickets for the event selected.
+		User displayed details about the event and total amount to be paid.
+		User is given a option to select from Online Wallet or Credit Card for payment.
+		Login is required.'''
+	booking=Booking.objects.get(id=booking_id) 
+ 
+	if request.method=="POST":                                  #After payment is done by user a ticket is created.
 		form=PaymentForm(request.POST)
 		if form.is_valid():
 			payment_method=form.cleaned_data['payment_method']
@@ -137,7 +152,7 @@ def payment(request,booking_id):
 			event_seat=event_seat-booking.no_of_person
 			Event.objects.filter(id=booking.event.id).update(seats=event_seat)
 				
-			return redirect('ticket_confirm',ticket_id=ticket.id)
+			return redirect('ticket_confirm',ticket_id=ticket.id)      #Redirct to ticket booked confirmation page.
 	
 	form=PaymentForm()
 	context={"form":form,"booking":booking}
@@ -146,23 +161,36 @@ def payment(request,booking_id):
 
 @login_required(login_url='login_page')
 def ticket_confirm(request,ticket_id):
+	'''View that displays a confirmation after ticket is booked.'''
 	ticket=Ticket.objects.get(id=ticket_id)
 	return render(request,'eventbooking/ticket_confirm.html',{"ticket":ticket})
 
 
 @login_required(login_url='login_page')
 def my_tickets(request):
-	tickets=Ticket.objects.filter(user=request.user)
-	tomdate=datetime.date.today() + datetime.timedelta(days=1)
-	timenow=datetime.datetime.now().time()
-	context={'tickets':tickets,'tomdate':tomdate,'timenow':timenow}
+	'''View that displays tickets booked by the user logged in.
+	Only ticket belonging to the user is displayed.
+	Users are given option to cancel the ticket if event time left is more than 24 hours''
+	Login is required.'''
+	tickets=Ticket.objects.filter(user=request.user)                         #Getting all the tickets
+	
+	if tickets.count() >0:
+		ticket=tickets.first()
+		today=datetime.date.today()                                            #Getting date and time to decide wether to display cancel button or not.
+		daybefore_event=ticket.booking.event.date-datetime.timedelta(days=1)
+		timenow=datetime.datetime.now().time()
+		context={'tickets':tickets,'today':today,'timenow':timenow,'daybefore_event':daybefore_event}
+	else:
+		context={'tickets':tickets}
 	return render(request,'eventbooking/my_tickets.html',context)
 
 #@login_required(login_url='login_page')
 @user_passes_test(lambda user: user.is_active and user.is_superuser, login_url='logout')
 def create_event(request):
+	'''View to create events.
+	Only admin user can create events. other user restricted.'''
 	if request.method=='POST':
-		form=EventForm(request.POST,request.FILES)
+		form=EventForm(request.POST,request.FILES)                         #Getting details submited by admin and creating event.
 		if form.is_valid():
 			form.save()
 			return redirect('home')
@@ -174,9 +202,11 @@ def create_event(request):
 
 @user_passes_test(lambda user: user.is_active and user.is_superuser, login_url='logout')
 def update_event(request,event_id):
+	'''View to update events.
+		Only Admin user can update an event.'''
 	event=Event.objects.get(id=event_id)
 
-	if request.method=='POST':
+	if request.method=='POST':                                          #Getting details submited by user and updating the event. 
 		form = EventForm(request.POST,request.FILES)
 		if form.is_valid():
 			event.name= request.POST.get('name')
@@ -202,9 +232,8 @@ def update_event(request,event_id):
 
 @login_required(login_url='login_page')
 def registered_events(request):
-	tickets=Ticket.objects.filter(user=request.user)
+	'''View to display the registered vents for which tickets are bought.
+		Login is required.'''
+	tickets=Ticket.objects.filter(user=request.user)                 #Getting events based on tickets booked.
 	
 	return render(request,'eventbooking/registered_events.html',{"tickets":tickets})
-
-			#Event.objects.filter(id=booking.event.id)
-	#print(events)

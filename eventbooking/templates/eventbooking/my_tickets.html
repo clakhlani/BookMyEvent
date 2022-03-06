@@ -46,7 +46,8 @@
 		</table>
 	</div>
 	<div style="padding-top: 10px; padding-bottom: 5px;">
-	{% if  timenow > ticket.booking.event.time and ticket.booking.event.date <= tomdate %}	
+	{% if today >= ticket.booking.event.date %}
+	{% elif timenow > ticket.booking.event.time and today == daybefore_event %}
 	{% else %}	
 	<a href="{% url 'cancel_ticket' ticket.id %}"><button>Cancel</button></a>
 	{% endif %}

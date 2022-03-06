@@ -5,9 +5,9 @@ services:
   volumes: 
    - ./data/db:/var/lib/postgresql/data
   environment:
-   - POSTGRES_DB=BME
-   - POSTGRES_USER=postgres
-   - POSTGRES_PASSWORD=chin@1234
+   - POSTGRES_DB=DB_NAME
+   - POSTGRES_USER=DB_USER
+   - POSTGRES_PASSWORD=DB_PASSWORD
 
  web:
   build: .

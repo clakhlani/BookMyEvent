@@ -6,6 +6,7 @@ import datetime
 
 
 class EventModelTest(TestCase):
+	'''Test Case for Event Model'''
 	@classmethod
 	def setUpTestData(cls):
 		Event.objects.create(name= 'Test Event',
@@ -25,6 +26,7 @@ class EventModelTest(TestCase):
 				
 
 class TicketModelTest(TestCase):
+	'''Test Case for Tickt Model'''
 	@classmethod
 	def setUpTestData(cls):
 		event=Event.objects.create(name= 'Test Event',
@@ -64,7 +66,7 @@ class TicketModelTest(TestCase):
 
 # Views Test case
 
-class UserRegistrationTest(TestCase):
+class ViewFunctionsTest(TestCase):
 	
 	def setUp(self):
 		self.client=Client()
@@ -136,7 +138,7 @@ class UserRegistrationTest(TestCase):
 
 
 	def test_registration_response(self):
-		
+		'''Test for register view get method'''
 		response=self.client.get(reverse('register'))
 
 		self.assertEquals(response.status_code,200)
@@ -145,14 +147,14 @@ class UserRegistrationTest(TestCase):
 	
 
 	def test_home_page_response(self):
-		
+		'''Test for home_page view get method'''
 		response=self.client.get(reverse('home'))
 
 		self.assertEquals(response.status_code,200)
 		self.assertTemplateUsed(response,'eventbooking/home.html')
 
 	def test_home_page_post(self):
-		
+		'''Test for home_page view post method. Different filter scenarios covered'''
 		response=self.client.post(reverse('home'),{"City":"Kolkata","Genre": "Music"})
 		response2=self.client.post(reverse('home'),{"City":"ALL","Genre": "Music"})
 		response3=self.client.post(reverse('home'),{"City":"Kolkata","Genre": "ALL"})
@@ -171,7 +173,7 @@ class UserRegistrationTest(TestCase):
 		self.assertTemplateUsed(response4,'eventbooking/home.html')
 
 	def test_event_page_response(self):
-				
+		'''Test for event_page view get method'''		
 		response=self.client.get(reverse('event',args=[self.event.id]))
 
 		self.assertEquals(response.status_code,200)
@@ -179,6 +181,7 @@ class UserRegistrationTest(TestCase):
 
 
 	def test_ticket_booking_get(self):
+		'''Test for ticket_booking get method'''
 
 		login=self.client.login(username='newuser',password='new@1234')
 
@@ -195,6 +198,7 @@ class UserRegistrationTest(TestCase):
 
 
 	def test_ticket_confirm_get(self):
+		'''Test for ticket_confirm view get method'''
 
 		login=self.client.login(username='newuser',password='new@1234')
 
@@ -210,6 +214,7 @@ class UserRegistrationTest(TestCase):
 
 
 	def test_my_ticket_get(self):
+		'''Test for my_tickets view get method'''
 
 		login=self.client.login(username='newuser',password='new@1234')
 
@@ -224,7 +229,7 @@ class UserRegistrationTest(TestCase):
 
 
 	def test_registered_events_get(self):
-
+		'''test for registered_events view get method'''
 		login=self.client.login(username='newuser',password='new@1234')
 
 
@@ -238,6 +243,7 @@ class UserRegistrationTest(TestCase):
 
 
 	def test_crete_event_get(self):
+		'''Test for create_event view get method'''
 		
 		login=self.client.login(username='admin',password='admin@123')
 
@@ -253,6 +259,7 @@ class UserRegistrationTest(TestCase):
 
 
 	def test_event_create_post(self):
+		'''Test for create_event view post method'''
 		
 		login=self.client.login(username='admin',password='admin@123')
 		response=self.client.post(reverse('create_event'),{'name': 'Test Event2',
@@ -274,7 +281,7 @@ class UserRegistrationTest(TestCase):
 
 
 	def test_update_event_get(self):
-		
+		'''Test for update_event view get method'''
 		login=self.client.login(username='admin',password='admin@123')
 
 
@@ -288,7 +295,7 @@ class UserRegistrationTest(TestCase):
 
 
 	def test_event_update_post(self):
-		
+		'''Test for update_event view post method'''
 		login=self.client.login(username='admin',password='admin@123')
 		response=self.client.post(reverse('update_event',args=[self.event.id]),{'name': 'Test Event3',
 			'summary':'This is a dummy event2',			
@@ -307,7 +314,7 @@ class UserRegistrationTest(TestCase):
 		
 
 	def test_payment_get(self):
-
+		'''Test for payment view get method'''
 		login=self.client.login(username='newuser',password='new@1234')
 
 		response=self.client.get(reverse('payment',args=[self.booking.id]))
@@ -320,7 +327,7 @@ class UserRegistrationTest(TestCase):
 
 
 	def test_payment_post(self):
-		
+		'''Test for payment view post method'''
 
 		user =User.objects.get(username='newuser')
 		login=self.client.login(username='newuser',password='new@1234')
@@ -335,7 +342,7 @@ class UserRegistrationTest(TestCase):
 	
 
 	def test_ticket_cancel_get(self):
-
+		'''Test for cancel_ticket get method. All different restrictioin scenarios covered.''' 
 		login=self.client.login(username='newuser',password='new@1234')
 
 		response=self.client.get(reverse('cancel_ticket',args=[self.ticket.id]))
@@ -366,6 +373,7 @@ class UserRegistrationTest(TestCase):
 
 
 	def test_ticket_cancel_post(self):
+		'''Test for cancel_ticket view post method'''
 		
 		login=self.client.login(username='newuser',password='new@1234')
 		response=self.client.post(reverse('cancel_ticket',args=[self.ticket.id]),{})
@@ -377,7 +385,7 @@ class UserRegistrationTest(TestCase):
 
 
 	def test_ticket_booking_post(self):
-		
+		'''Test for  ticket_booking view post method.All seat booking scearios covered.'''
 		login=self.client.login(username='newuser',password='new@1234')
 		response=self.client.post(reverse('ticket_book',args=[self.event.id]),{'amount':800.00,'no_of_person':4,'event':self.event})
 		response2=self.client.post(reverse('ticket_book',args=[self.event.id]),{'amount':800.00,'no_of_person':0,'event':self.event})
@@ -389,13 +397,12 @@ class UserRegistrationTest(TestCase):
 		self.assertEquals(response.status_code,302)
 
 
-	def test_logut_get(self):
+	def test_logout_get(self):
+		'''Test for logout view get method'''
 		login=self.client.login(username='newuser',password='new@1234')
 
 		response=self.client.get(reverse('logout'))
 
 		self.assertEquals(response.status_code,302)
 
-	def registration_post(self):
-
-		response=self.client.post(reverse('regitser'),{'username':'testingUser','password1':'First@pass','email': 'testing@gmail.com'})
+	

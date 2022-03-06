@@ -2,5 +2,6 @@
 omit=
 	*/env/*
 	*/tests/*
+	*/docs/*
 	*/migratons/*
 	*/__init__.py

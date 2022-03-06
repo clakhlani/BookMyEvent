@@ -4,7 +4,7 @@ from django.db.models.deletion import CASCADE , SET_NULL
 
 # Create your models here.
 class Event(models.Model):
-	
+	'''Model for Event Details'''
 	name= models.CharField(max_length=200)
 	summary=models.TextField(null=True,blank=True)
 	seats=models.IntegerField()
@@ -21,12 +21,13 @@ class Event(models.Model):
 
 
 class Booking(models.Model):
+	'''Model for booking details'''
 	amount = models.DecimalField(max_digits=8,decimal_places=2)
 	no_of_person=models.IntegerField()
 	event=models.ForeignKey(Event,on_delete=models.CASCADE)
 
 class Ticket(models.Model):
-	
+	'''Model for Ticket Booked details.'''
 	booking=models.ForeignKey(Booking,default=None,on_delete=models.CASCADE)
 	date_booked=models.DateField()
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
