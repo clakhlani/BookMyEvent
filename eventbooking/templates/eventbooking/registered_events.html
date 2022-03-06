@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 <h1 class="fontdesc">REGISTERED EVENTS</h1>
-
+<hr>
+{% if tickets.count == 0 %}
+<h4 class="fontdesc"> No Bookings Yet....</h4>
+{% else %}
 
 <div class="fontdesc">
 	{% for ticket in tickets %}
@@ -14,4 +17,5 @@
 		<br>
 	{% endfor %}
 </div>
+{% endif %}
 {% endblock %}
